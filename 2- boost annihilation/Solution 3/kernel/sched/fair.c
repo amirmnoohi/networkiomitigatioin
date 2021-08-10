@@ -717,6 +717,16 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	curr->sum_exec_runtime += delta_exec;
 	schedstat_add(cfs_rq, exec_clock, delta_exec);
 
+	if(curr->rt_nice!=0)
+	{
+		if(curr->rt_nice>=delta_exec)
+			curr->rt_nice= curr->rt_nice - delta_exec;
+		else
+			curr->rt_nice=0;
+		return;
+	}
+
+
 	curr->vruntime += calc_delta_fair(delta_exec, curr);
 	update_min_vruntime(cfs_rq);
 
@@ -5210,9 +5220,11 @@ wakeup_gran(struct sched_entity *curr, struct sched_entity *se)
 static int
 wakeup_preempt_entity(struct sched_entity *curr, struct sched_entity *se)
 {
-	s64 gran, vdiff = curr->vruntime - se->vruntime;
+	s64 gran,rtdiff=curr->rt_nice - se->rt_nice, vdiff = curr->vruntime - se->vruntime;
 
-	if (vdiff <= 0)
+	if(rtdiff >0)
+		return -1;
+	else if (rtdiff==0 && vdiff <= 0)
 		return -1;
 
 	gran = wakeup_gran(curr, se);

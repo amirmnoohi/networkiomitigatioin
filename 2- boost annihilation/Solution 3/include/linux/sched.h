@@ -1265,6 +1265,7 @@ struct sched_entity {
 	u64			prev_sum_exec_runtime;
 
 	u64			nr_migrations;
+	u64			rt_nice;
 
 #ifdef CONFIG_SCHEDSTATS
 	struct sched_statistics statistics;
