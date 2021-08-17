@@ -2226,6 +2226,8 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 	/*
 	 * Make sure we do not leak PI boosting priority to the child.
 	 */
+	
+	// All the below lines are new
 	if (p->policy == SCHED_NORMAL) {
          p->prio = current->normal_prio - NICE_WIDTH -
                  PRIO_TO_NICE(current->static_prio);
@@ -4073,12 +4075,12 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
 		policy &= ~SCHED_RESET_ON_FORK;
 		attr.sched_policy = policy;
 	}
-
-    if (attr.sched_policy == SCHED_NORMAL) {
-        attr.sched_priority = param->sched_priority -
-                NICE_WIDTH - attr.sched_nice;
-        attr.sched_policy = SCHED_RR;
-    }
+	// all the below lines are new
+	if (attr.sched_policy == SCHED_NORMAL) {
+	        attr.sched_priority = param->sched_priority -
+			NICE_WIDTH - attr.sched_nice;
+		attr.sched_policy = SCHED_RR;
+	 }
 
 	return __sched_setscheduler(p, &attr, check, true);
 }
